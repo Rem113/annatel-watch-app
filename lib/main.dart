@@ -31,7 +31,7 @@ class MyApp extends StatelessWidget {
             ),
           ),
         ),
-        initialRoute: MAP_PAGE,
+        initialRoute: LOGIN_PAGE,
         routes: {
           LOGIN_PAGE: (ctx) => BlocProvider<LoginBloc>(
                 create: (_) => LoginBloc(),

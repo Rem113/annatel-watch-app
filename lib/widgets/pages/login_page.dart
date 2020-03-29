@@ -45,28 +45,79 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
+  void showSnackBar(BuildContext context, SnackBar snackBar) {
+    Scaffold.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(snackBar);
+  }
+
   @override
   Widget build(BuildContext context) => Scaffold(
         body: BlocListener<LoginBloc, LoginState>(
           bloc: BlocProvider.of<LoginBloc>(context),
           listener: (context, state) {
-            if (state.success) {
-              Scaffold.of(context).showSnackBar(SnackBar(
-                content: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Text(
-                      "You are logged in",
-                      style: TextStyle(
-                        fontFamily:
-                            Theme.of(context).textTheme.title.fontFamily,
+            if (state.submitting) {
+              showSnackBar(
+                context,
+                SnackBar(
+                  backgroundColor: Theme.of(context).accentColor,
+                  content: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Text(
+                        "Logging in...",
+                        style: TextStyle(
+                          fontFamily:
+                              Theme.of(context).textTheme.title.fontFamily,
+                        ),
                       ),
-                    ),
-                    Icon(Icons.done),
-                  ],
+                      CircularProgressIndicator(),
+                    ],
+                  ),
                 ),
-                backgroundColor: Colors.green,
-              ));
+              );
+            }
+            if (state.error) {
+              showSnackBar(
+                context,
+                SnackBar(
+                  content: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Text(
+                        "An error has occured",
+                        style: TextStyle(
+                          fontFamily:
+                              Theme.of(context).textTheme.title.fontFamily,
+                        ),
+                      ),
+                      Icon(Icons.done),
+                    ],
+                  ),
+                  backgroundColor: Theme.of(context).errorColor,
+                ),
+              );
+            }
+            if (state.success) {
+              showSnackBar(
+                context,
+                SnackBar(
+                  content: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Text(
+                        "You are logged in",
+                        style: TextStyle(
+                          fontFamily:
+                              Theme.of(context).textTheme.title.fontFamily,
+                        ),
+                      ),
+                      Icon(Icons.done),
+                    ],
+                  ),
+                  backgroundColor: Colors.green,
+                ),
+              );
             }
           },
           child: BlocBuilder<LoginBloc, LoginState>(

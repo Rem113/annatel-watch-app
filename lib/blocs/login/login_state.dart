@@ -6,6 +6,8 @@ class LoginState extends Equatable {
   final String passwordError;
   final bool shouldValidateEmail;
   final bool shouldValidatePassword;
+  final bool submitting;
+  final bool error;
   final bool success;
 
   LoginState({
@@ -13,6 +15,8 @@ class LoginState extends Equatable {
     @required this.passwordError,
     @required this.shouldValidateEmail,
     @required this.shouldValidatePassword,
+    @required this.submitting,
+    @required this.error,
     @required this.success,
   });
 
@@ -22,6 +26,8 @@ class LoginState extends Equatable {
       passwordError: "",
       shouldValidateEmail: false,
       shouldValidatePassword: false,
+      submitting: false,
+      error: false,
       success: false,
     );
   }
@@ -31,6 +37,8 @@ class LoginState extends Equatable {
     String passwordError,
     bool shouldValidateEmail,
     bool shouldValidatePassword,
+    bool submitting,
+    bool error,
     bool success,
   }) {
     return copyWith(
@@ -38,6 +46,8 @@ class LoginState extends Equatable {
       passwordError: passwordError,
       shouldValidateEmail: shouldValidateEmail,
       shouldValidatePassword: shouldValidatePassword,
+      submitting: submitting,
+      error: error,
       success: success,
     );
   }
@@ -47,6 +57,8 @@ class LoginState extends Equatable {
     String passwordError,
     bool shouldValidateEmail,
     bool shouldValidatePassword,
+    bool submitting,
+    bool error,
     bool success,
   }) {
     return LoginState(
@@ -55,6 +67,8 @@ class LoginState extends Equatable {
       shouldValidateEmail: shouldValidateEmail ?? this.shouldValidateEmail,
       shouldValidatePassword:
           shouldValidatePassword ?? this.shouldValidatePassword,
+      submitting: submitting ?? this.submitting,
+      error: error ?? this.error,
       success: success ?? this.success,
     );
   }
@@ -65,6 +79,8 @@ class LoginState extends Equatable {
         passwordError,
         shouldValidateEmail,
         shouldValidatePassword,
+        submitting,
+        error,
         success,
       ];
 }

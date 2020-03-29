@@ -50,6 +50,14 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         passwordError: passwordError,
       );
     else {
+      yield state.update(
+        emailError: "",
+        passwordError: "",
+        success: false,
+        submitting: true,
+        error: false,
+      );
+
       final tokenManager = TokenManager();
       final client = HTTPClient(tokenManager: tokenManager);
       final authService =
@@ -61,8 +69,16 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       );
 
       yield res.fold(
-        () => state.update(success: true),
-        (failure) => state.update(success: false),
+        () => state.update(
+          success: true,
+          submitting: false,
+          error: false,
+        ),
+        (failure) => state.update(
+          success: false,
+          submitting: false,
+          error: true,
+        ),
       );
     }
   }
