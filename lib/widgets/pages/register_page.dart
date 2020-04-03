@@ -106,6 +106,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         ),
                         TextFormField(
                           controller: _passwordController,
+                          focusNode: _passwordNode,
                           obscureText: true,
                           textInputAction: TextInputAction.next,
                           onEditingComplete: () {
@@ -122,6 +123,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         ),
                         TextFormField(
                           controller: _passwordConfirmController,
+                          focusNode: _passwordConfirmNode,
                           obscureText: true,
                           textInputAction: TextInputAction.done,
                           onEditingComplete: _attemptRegister,
