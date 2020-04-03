@@ -19,10 +19,11 @@ class LoginFormBloc extends Bloc<LoginFormEvent, LoginFormState> {
   Stream<LoginFormState> mapEventToState(
     LoginFormEvent event,
   ) async* {
-    if (event is FormSubmitted) yield* _mapFormSubmittedToState(event);
+    print(state.submitting);
+    if (event is LoginAttempt) yield* _mapLoginAttemptToState(event);
   }
 
-  Stream<LoginFormState> _mapFormSubmittedToState(FormSubmitted event) async* {
+  Stream<LoginFormState> _mapLoginAttemptToState(LoginAttempt event) async* {
     final emailError = Validators.validateEmail(event.email);
     final passwordError = Validators.validatePassword(event.password);
 

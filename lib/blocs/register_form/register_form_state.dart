@@ -1,85 +1,79 @@
 part of 'register_form_bloc.dart';
 
-class RegisterFormState extends Equatable {
+@immutable
+class RegisterFormState {
   final String emailError;
   final String passwordError;
-  final bool shouldValidateEmail;
-  final bool shouldValidatePassword;
+  final String passwordConfirmError;
   final bool submitting;
-  final bool error;
-  final bool success;
+  final String serverError;
+  final bool registered;
 
   RegisterFormState({
     @required this.emailError,
     @required this.passwordError,
-    @required this.shouldValidateEmail,
-    @required this.shouldValidatePassword,
+    @required this.passwordConfirmError,
     @required this.submitting,
-    @required this.error,
-    @required this.success,
+    @required this.serverError,
+    @required this.registered,
   });
 
   factory RegisterFormState.initial() {
     return RegisterFormState(
-      emailError: "",
-      passwordError: "",
-      shouldValidateEmail: false,
-      shouldValidatePassword: false,
+      emailError: null,
+      passwordError: null,
+      passwordConfirmError: null,
       submitting: false,
-      error: false,
-      success: false,
+      serverError: null,
+      registered: false,
     );
   }
 
-  RegisterFormState update({
-    String emailError,
-    String passwordError,
-    bool shouldValidateEmail,
-    bool shouldValidatePassword,
-    bool submitting,
-    bool error,
-    bool success,
-  }) {
-    return copyWith(
-      emailError: emailError,
-      passwordError: passwordError,
-      shouldValidateEmail: shouldValidateEmail,
-      shouldValidatePassword: shouldValidatePassword,
-      submitting: submitting,
-      error: error,
-      success: success,
-    );
-  }
-
-  RegisterFormState copyWith({
-    String emailError,
-    String passwordError,
-    bool shouldValidateEmail,
-    bool shouldValidatePassword,
-    bool submitting,
-    bool error,
-    bool success,
+  factory RegisterFormState.inputError({
+    @required String emailError,
+    @required String passwordError,
+    @required String passwordConfirmError,
   }) {
     return RegisterFormState(
-      emailError: emailError ?? this.emailError,
-      passwordError: passwordError ?? this.passwordError,
-      shouldValidateEmail: shouldValidateEmail ?? this.shouldValidateEmail,
-      shouldValidatePassword:
-          shouldValidatePassword ?? this.shouldValidatePassword,
-      submitting: submitting ?? this.submitting,
-      error: error ?? this.error,
-      success: success ?? this.success,
+      emailError: emailError,
+      passwordError: passwordError,
+      passwordConfirmError: passwordConfirmError,
+      submitting: false,
+      serverError: null,
+      registered: false,
     );
   }
 
-  @override
-  List<Object> get props => [
-        emailError,
-        passwordError,
-        shouldValidateEmail,
-        shouldValidatePassword,
-        submitting,
-        error,
-        success,
-      ];
+  factory RegisterFormState.submitting() {
+    return RegisterFormState(
+      emailError: null,
+      passwordError: null,
+      passwordConfirmError: null,
+      submitting: true,
+      serverError: null,
+      registered: false,
+    );
+  }
+
+  factory RegisterFormState.serverError(String serverError) {
+    return RegisterFormState(
+      emailError: null,
+      passwordError: null,
+      passwordConfirmError: null,
+      submitting: false,
+      serverError: serverError,
+      registered: false,
+    );
+  }
+
+  factory RegisterFormState.registered() {
+    return RegisterFormState(
+      emailError: null,
+      passwordError: null,
+      passwordConfirmError: null,
+      submitting: false,
+      serverError: null,
+      registered: true,
+    );
+  }
 }

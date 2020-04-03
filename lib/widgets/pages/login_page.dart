@@ -26,10 +26,15 @@ class _LoginPageState extends State<LoginPage> {
     _loginFormBloc = BlocProvider.of<LoginFormBloc>(context);
   }
 
-  void showSnackBar(BuildContext context, SnackBar snackBar) {
-    Scaffold.of(context)
-      ..hideCurrentSnackBar()
-      ..showSnackBar(snackBar);
+  void _attemptLogin() {
+    _loginFormBloc.add(
+      LoginAttempt(
+        email: _emailController.text,
+        password: _passwordController.text,
+      ),
+    );
+
+    FocusScope.of(context).unfocus();
   }
 
   @override
@@ -37,48 +42,27 @@ class _LoginPageState extends State<LoginPage> {
         body: BlocListener<LoginFormBloc, LoginFormState>(
           bloc: BlocProvider.of<LoginFormBloc>(context),
           listener: (context, state) {
-            if (state.submitting) {
-              showSnackBar(
-                context,
-                SnackBar(
-                  backgroundColor: Theme.of(context).accentColor,
-                  content: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Text(
-                        "Logging in...",
-                        style: TextStyle(
-                          fontFamily:
-                              Theme.of(context).textTheme.title.fontFamily,
-                        ),
-                      ),
-                      CircularProgressIndicator(),
-                    ],
-                  ),
-                  duration: Duration(days: 1),
-                ),
-              );
-            }
             if (state.serverError != null) {
-              showSnackBar(
-                context,
-                SnackBar(
-                  content: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Text(
-                        state.serverError,
-                        style: TextStyle(
-                          fontFamily:
-                              Theme.of(context).textTheme.title.fontFamily,
+              Scaffold.of(context)
+                ..hideCurrentSnackBar()
+                ..showSnackBar(
+                  SnackBar(
+                    content: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Text(
+                          state.serverError,
+                          style: TextStyle(
+                            fontFamily:
+                                Theme.of(context).textTheme.title.fontFamily,
+                          ),
                         ),
-                      ),
-                      Icon(Icons.done),
-                    ],
+                        Icon(Icons.done),
+                      ],
+                    ),
+                    backgroundColor: Theme.of(context).errorColor,
                   ),
-                  backgroundColor: Theme.of(context).errorColor,
-                ),
-              );
+                );
             }
             if (state.loggedIn) {
               Navigator.of(context).pushReplacementNamed(MAP_PAGE);
@@ -119,6 +103,8 @@ class _LoginPageState extends State<LoginPage> {
                         TextFormField(
                           controller: _passwordController,
                           obscureText: true,
+                          textInputAction: TextInputAction.done,
+                          onEditingComplete: _attemptLogin,
                           decoration: InputDecoration(
                             labelText: "Password",
                             errorText: state.passwordError,
@@ -144,24 +130,22 @@ class _LoginPageState extends State<LoginPage> {
                         SizedBox(
                           height: 16.0,
                         ),
-                        GradientRaisedButton(
-                          borderRadius: 8.0,
-                          gradient: LinearGradient(
-                            colors: [
-                              Theme.of(context).primaryColor,
-                              Theme.of(context).accentColor,
-                            ],
-                          ),
-                          onPressed: () {
-                            _loginFormBloc.add(
-                              FormSubmitted(
-                                email: _emailController.text,
-                                password: _passwordController.text,
+                        state.submitting
+                            ? Padding(
+                                padding: EdgeInsets.all(8.0),
+                                child: CircularProgressIndicator(),
+                              )
+                            : GradientRaisedButton(
+                                borderRadius: 8.0,
+                                gradient: LinearGradient(
+                                  colors: [
+                                    Theme.of(context).primaryColor,
+                                    Theme.of(context).accentColor,
+                                  ],
+                                ),
+                                onPressed: _attemptLogin,
+                                text: "Login",
                               ),
-                            );
-                          },
-                          text: "Login",
-                        ),
                       ],
                     ),
                   ),
@@ -176,6 +160,8 @@ class _LoginPageState extends State<LoginPage> {
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
+
+    _passwordNode.dispose();
 
     super.dispose();
   }

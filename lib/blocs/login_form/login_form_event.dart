@@ -4,11 +4,11 @@ abstract class LoginFormEvent {
   const LoginFormEvent();
 }
 
-class FormSubmitted extends LoginFormEvent {
+class LoginAttempt extends LoginFormEvent {
   final String email;
   final String password;
 
-  FormSubmitted({
+  LoginAttempt({
     @required this.email,
     @required this.password,
   });

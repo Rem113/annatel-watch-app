@@ -16,4 +16,17 @@ abstract class Validators {
     if (input.length < 8) return 'Password must be at least 8 characters';
     return null;
   }
+
+  static String validatePasswordConfirm(
+    String password,
+    String passwordConfirm,
+  ) {
+    final passwordInput = password.trim();
+    final passwordConfirmInput = passwordConfirm.trim();
+
+    if (passwordConfirmInput.isEmpty) return "Please confirm your password";
+    if (passwordInput != passwordConfirmInput)
+      return "Passwords does not match";
+    return null;
+  }
 }

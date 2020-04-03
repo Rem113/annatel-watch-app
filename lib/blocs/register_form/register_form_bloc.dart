@@ -20,68 +20,44 @@ class RegisterFormBloc extends Bloc<RegisterFormEvent, RegisterFormState> {
   Stream<RegisterFormState> mapEventToState(
     RegisterFormEvent event,
   ) async* {
-    if (event is EmailChanged && state.shouldValidateEmail)
-      yield* _mapEmailChangedToState(event);
-    else if (event is PasswordChanged && state.shouldValidatePassword)
-      yield* _mapPasswordChangedToState(event);
-    else if (event is RegisterAttempt) yield* _mapFormSubmittedToState(event);
+    if (event is RegisterAttempt && !state.submitting)
+      yield* _mapRegisterAttemptToState(event);
   }
 
-  Stream<RegisterFormState> _mapEmailChangedToState(EmailChanged event) async* {
-    yield state.update(
-      emailError: Validators.validateEmail(event.email),
-    );
-  }
-
-  Stream<RegisterFormState> _mapPasswordChangedToState(
-      PasswordChanged event) async* {
-    yield state.update(
-      passwordError: Validators.validatePassword(event.password),
-    );
-  }
-
-  Stream<RegisterFormState> _mapFormSubmittedToState(
+  Stream<RegisterFormState> _mapRegisterAttemptToState(
       RegisterAttempt event) async* {
     final emailError = Validators.validateEmail(event.email);
     final passwordError = Validators.validatePassword(event.password);
-    if (emailError.isNotEmpty || passwordError.isNotEmpty)
-      yield state.update(
-        shouldValidateEmail: true,
-        shouldValidatePassword: true,
+    final passwordConfirmError = Validators.validatePasswordConfirm(
+      event.password,
+      event.passwordConfirm,
+    );
+
+    if (emailError != null ||
+        passwordError != null ||
+        passwordConfirmError != null) {
+      yield RegisterFormState.inputError(
         emailError: emailError,
         passwordError: passwordError,
+        passwordConfirmError: passwordConfirmError,
       );
-    else {
-      yield state.update(
-        emailError: "",
-        passwordError: "",
-        success: false,
-        submitting: true,
-        error: false,
-      );
-
-      final tokenManager = TokenManager();
-      final client = HTTPClient(tokenManager: tokenManager);
-      final authService =
-          AuthService(client: client, tokenManager: tokenManager);
-
-      final res = await authService.register(
-        email: event.email,
-        password: event.password,
-      );
-
-      yield res.fold(
-        () => state.update(
-          success: true,
-          submitting: false,
-          error: false,
-        ),
-        (failure) => state.update(
-          success: false,
-          submitting: false,
-          error: true,
-        ),
-      );
+      return;
     }
+
+    yield RegisterFormState.submitting();
+
+    final tokenManager = TokenManager();
+    final client = HTTPClient(tokenManager: tokenManager);
+    final authService = AuthService(client: client, tokenManager: tokenManager);
+
+    final res = await authService.register(
+      email: event.email,
+      password: event.password,
+    );
+
+    yield res.fold(
+      () => RegisterFormState.registered(),
+      (failure) => RegisterFormState.serverError(failure.message),
+    );
   }
 }

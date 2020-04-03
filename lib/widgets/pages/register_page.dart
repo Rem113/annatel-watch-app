@@ -16,39 +16,29 @@ class _RegisterPageState extends State<RegisterPage> {
 
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _passwordConfirmController =
+      TextEditingController();
 
   final FocusNode _passwordNode = FocusNode();
+  final FocusNode _passwordConfirmNode = FocusNode();
 
   @override
   void initState() {
     super.initState();
 
     _registerFormBloc = BlocProvider.of<RegisterFormBloc>(context);
-
-    _emailController.addListener(_onEmailInput);
-    _passwordController.addListener(_onPasswordInput);
   }
 
-  void _onEmailInput() {
+  void _attemptRegister() {
     _registerFormBloc.add(
-      EmailChanged(
+      RegisterAttempt(
         email: _emailController.text,
-      ),
-    );
-  }
-
-  void _onPasswordInput() {
-    _registerFormBloc.add(
-      PasswordChanged(
         password: _passwordController.text,
+        passwordConfirm: _passwordConfirmController.text,
       ),
     );
-  }
 
-  void showSnackBar(BuildContext context, SnackBar snackBar) {
-    Scaffold.of(context)
-      ..hideCurrentSnackBar()
-      ..showSnackBar(snackBar);
+    FocusScope.of(context).unfocus();
   }
 
   @override
@@ -56,49 +46,29 @@ class _RegisterPageState extends State<RegisterPage> {
         body: BlocListener<RegisterFormBloc, RegisterFormState>(
           bloc: _registerFormBloc,
           listener: (context, state) {
-            if (state.submitting) {
-              showSnackBar(
-                context,
-                SnackBar(
-                  backgroundColor: Theme.of(context).accentColor,
-                  content: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Text(
-                        "Attempting to register...",
-                        style: TextStyle(
-                          fontFamily:
-                              Theme.of(context).textTheme.title.fontFamily,
+            if (state.serverError != null) {
+              Scaffold.of(context)
+                ..hideCurrentSnackBar()
+                ..showSnackBar(
+                  SnackBar(
+                    content: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Text(
+                          state.serverError,
+                          style: TextStyle(
+                            fontFamily:
+                                Theme.of(context).textTheme.title.fontFamily,
+                          ),
                         ),
-                      ),
-                      CircularProgressIndicator(),
-                    ],
+                        Icon(Icons.done),
+                      ],
+                    ),
+                    backgroundColor: Theme.of(context).errorColor,
                   ),
-                ),
-              );
+                );
             }
-            if (state.error) {
-              showSnackBar(
-                context,
-                SnackBar(
-                  content: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Text(
-                        "An error has occured",
-                        style: TextStyle(
-                          fontFamily:
-                              Theme.of(context).textTheme.title.fontFamily,
-                        ),
-                      ),
-                      Icon(Icons.done),
-                    ],
-                  ),
-                  backgroundColor: Theme.of(context).errorColor,
-                ),
-              );
-            }
-            if (state.success) {
+            if (state.registered) {
               Navigator.of(context).pushReplacementNamed(LOGIN_PAGE);
             }
           },
@@ -128,10 +98,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           },
                           decoration: InputDecoration(
                             labelText: "Email",
-                            errorText: state.shouldValidateEmail &&
-                                    state.emailError.isNotEmpty
-                                ? state.emailError
-                                : null,
+                            errorText: state.emailError,
                           ),
                         ),
                         SizedBox(
@@ -140,12 +107,27 @@ class _RegisterPageState extends State<RegisterPage> {
                         TextFormField(
                           controller: _passwordController,
                           obscureText: true,
+                          textInputAction: TextInputAction.next,
+                          onEditingComplete: () {
+                            FocusScope.of(context)
+                                .requestFocus(_passwordConfirmNode);
+                          },
                           decoration: InputDecoration(
                             labelText: "Password",
-                            errorText: state.shouldValidatePassword &&
-                                    state.passwordError.isNotEmpty
-                                ? state.passwordError
-                                : null,
+                            errorText: state.passwordError,
+                          ),
+                        ),
+                        SizedBox(
+                          height: 32.0,
+                        ),
+                        TextFormField(
+                          controller: _passwordConfirmController,
+                          obscureText: true,
+                          textInputAction: TextInputAction.done,
+                          onEditingComplete: _attemptRegister,
+                          decoration: InputDecoration(
+                            labelText: "Confirm password",
+                            errorText: state.passwordConfirmError,
                           ),
                         ),
                         SizedBox(
@@ -170,24 +152,22 @@ class _RegisterPageState extends State<RegisterPage> {
                         SizedBox(
                           height: 16.0,
                         ),
-                        GradientRaisedButton(
-                          borderRadius: 8.0,
-                          gradient: LinearGradient(
-                            colors: [
-                              Theme.of(context).primaryColor,
-                              Theme.of(context).accentColor,
-                            ],
-                          ),
-                          onPressed: () {
-                            _registerFormBloc.add(
-                              RegisterAttempt(
-                                email: _emailController.text,
-                                password: _passwordController.text,
+                        state.submitting
+                            ? Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: CircularProgressIndicator(),
+                              )
+                            : GradientRaisedButton(
+                                borderRadius: 8.0,
+                                gradient: LinearGradient(
+                                  colors: [
+                                    Theme.of(context).primaryColor,
+                                    Theme.of(context).accentColor,
+                                  ],
+                                ),
+                                onPressed: _attemptRegister,
+                                text: "Register",
                               ),
-                            );
-                          },
-                          text: "Register",
-                        ),
                       ],
                     ),
                   ),
@@ -202,6 +182,10 @@ class _RegisterPageState extends State<RegisterPage> {
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
+    _passwordConfirmController.dispose();
+
+    _passwordNode.dispose();
+    _passwordConfirmNode.dispose();
 
     super.dispose();
   }
