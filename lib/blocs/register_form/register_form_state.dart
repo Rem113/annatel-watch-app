@@ -1,7 +1,6 @@
-part of 'login_bloc.dart';
+part of 'register_form_bloc.dart';
 
-@immutable
-class LoginState extends Equatable {
+class RegisterFormState extends Equatable {
   final String emailError;
   final String passwordError;
   final bool shouldValidateEmail;
@@ -10,7 +9,7 @@ class LoginState extends Equatable {
   final bool error;
   final bool success;
 
-  LoginState({
+  RegisterFormState({
     @required this.emailError,
     @required this.passwordError,
     @required this.shouldValidateEmail,
@@ -20,8 +19,8 @@ class LoginState extends Equatable {
     @required this.success,
   });
 
-  factory LoginState.initial() {
-    return LoginState(
+  factory RegisterFormState.initial() {
+    return RegisterFormState(
       emailError: "",
       passwordError: "",
       shouldValidateEmail: false,
@@ -32,7 +31,7 @@ class LoginState extends Equatable {
     );
   }
 
-  LoginState update({
+  RegisterFormState update({
     String emailError,
     String passwordError,
     bool shouldValidateEmail,
@@ -52,7 +51,7 @@ class LoginState extends Equatable {
     );
   }
 
-  LoginState copyWith({
+  RegisterFormState copyWith({
     String emailError,
     String passwordError,
     bool shouldValidateEmail,
@@ -61,7 +60,7 @@ class LoginState extends Equatable {
     bool error,
     bool success,
   }) {
-    return LoginState(
+    return RegisterFormState(
       emailError: emailError ?? this.emailError,
       passwordError: passwordError ?? this.passwordError,
       shouldValidateEmail: shouldValidateEmail ?? this.shouldValidateEmail,

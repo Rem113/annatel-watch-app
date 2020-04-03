@@ -1,7 +1,19 @@
-abstract class Failure {}
+abstract class Failure {
+  final String message;
+  final Map<String, dynamic> payload;
 
-class AuthFailure {
-  final Object errors;
+  Failure({
+    this.message,
+    this.payload,
+  });
+}
 
-  AuthFailure(this.errors);
+class AuthFailure extends Failure {
+  AuthFailure({
+    String message,
+    Map<String, dynamic> payload,
+  }) : super(
+          message: message,
+          payload: payload,
+        );
 }

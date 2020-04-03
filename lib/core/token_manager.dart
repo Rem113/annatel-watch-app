@@ -11,17 +11,17 @@ class TokenManager {
   }
 
   Future<void> setToken(String token) {
-    // final storage = FlutterSecureStorage();
+    final storage = FlutterSecureStorage();
 
-    // return storage.write(
-    //   key: _TOKEN_KEY,
-    //   value: token,
-    // );
+    return storage.write(
+      key: _TOKEN_KEY,
+      value: token,
+    );
   }
 
   Future<String> getToken() {
-    // final storage = FlutterSecureStorage();
+    final storage = FlutterSecureStorage();
 
-    // return storage.read(key: _TOKEN_KEY);
+    return storage.read(key: _TOKEN_KEY);
   }
 }

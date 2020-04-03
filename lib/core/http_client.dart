@@ -15,19 +15,18 @@ class HTTPClient {
 
   Future<http.Response> get(url, {Map<String, String> headers}) async {
     final token = await tokenManager.getToken();
+    headers[HttpHeaders.authorizationHeader] = token;
 
     return http.get(
       url,
-      headers: {
-        ...headers,
-        HttpHeaders.authorizationHeader: token,
-      },
+      headers: headers,
     );
   }
 
   Future<http.Response> post(url,
       {Map<String, String> headers, body, Encoding encoding}) async {
-    final token = "await tokenManager.getToken()";
+    final token = await tokenManager.getToken();
+    headers[HttpHeaders.authorizationHeader] = token;
 
     return http.post(
       url,

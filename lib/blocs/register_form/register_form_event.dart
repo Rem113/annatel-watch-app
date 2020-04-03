@@ -1,10 +1,10 @@
-part of 'login_bloc.dart';
+part of 'register_form_bloc.dart';
 
-abstract class LoginEvent extends Equatable {
-  const LoginEvent();
+abstract class RegisterFormEvent extends Equatable {
+  const RegisterFormEvent();
 }
 
-class EmailChanged extends LoginEvent {
+class EmailChanged extends RegisterFormEvent {
   final String email;
 
   EmailChanged({
@@ -15,7 +15,7 @@ class EmailChanged extends LoginEvent {
   List<Object> get props => [email];
 }
 
-class PasswordChanged extends LoginEvent {
+class PasswordChanged extends RegisterFormEvent {
   final String password;
 
   PasswordChanged({
@@ -26,11 +26,11 @@ class PasswordChanged extends LoginEvent {
   List<Object> get props => [password];
 }
 
-class FormSubmitted extends LoginEvent {
+class RegisterAttempt extends RegisterFormEvent {
   final String email;
   final String password;
 
-  FormSubmitted({
+  RegisterAttempt({
     @required this.email,
     @required this.password,
   });

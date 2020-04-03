@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'blocs/login/login_bloc.dart';
-import 'blocs/register/register_bloc.dart';
+import 'blocs/login_form/login_form_bloc.dart';
+import 'blocs/register_form/register_form_bloc.dart';
 import 'routes.dart';
 import 'widgets/pages/login_page.dart';
 import 'widgets/pages/map_page.dart';
@@ -33,12 +33,12 @@ class MyApp extends StatelessWidget {
         ),
         initialRoute: LOGIN_PAGE,
         routes: {
-          LOGIN_PAGE: (ctx) => BlocProvider<LoginBloc>(
-                create: (_) => LoginBloc(),
+          LOGIN_PAGE: (ctx) => BlocProvider<LoginFormBloc>(
+                create: (_) => LoginFormBloc(),
                 child: LoginPage(),
               ),
-          REGISTER_PAGE: (ctx) => BlocProvider<RegisterBloc>(
-                create: (_) => RegisterBloc(),
+          REGISTER_PAGE: (ctx) => BlocProvider<RegisterFormBloc>(
+                create: (_) => RegisterFormBloc(),
                 child: RegisterPage(),
               ),
           MAP_PAGE: (ctx) => MapPage(),

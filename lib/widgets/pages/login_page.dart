@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../blocs/login/login_bloc.dart';
+import '../../blocs/login_form/login_form_bloc.dart';
 import '../../routes.dart';
 import '../controls/gradient_flat_button.dart';
 import '../controls/gradient_raised_button.dart';
@@ -12,7 +12,7 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  LoginBloc _loginBloc;
+  LoginFormBloc _loginFormBloc;
 
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
@@ -23,26 +23,7 @@ class _LoginPageState extends State<LoginPage> {
   void initState() {
     super.initState();
 
-    _loginBloc = BlocProvider.of<LoginBloc>(context);
-
-    _emailController.addListener(_onEmailInput);
-    _passwordController.addListener(_onPasswordInput);
-  }
-
-  void _onEmailInput() {
-    _loginBloc.add(
-      EmailChanged(
-        email: _emailController.text,
-      ),
-    );
-  }
-
-  void _onPasswordInput() {
-    _loginBloc.add(
-      PasswordChanged(
-        password: _passwordController.text,
-      ),
-    );
+    _loginFormBloc = BlocProvider.of<LoginFormBloc>(context);
   }
 
   void showSnackBar(BuildContext context, SnackBar snackBar) {
@@ -53,8 +34,8 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        body: BlocListener<LoginBloc, LoginState>(
-          bloc: BlocProvider.of<LoginBloc>(context),
+        body: BlocListener<LoginFormBloc, LoginFormState>(
+          bloc: BlocProvider.of<LoginFormBloc>(context),
           listener: (context, state) {
             if (state.submitting) {
               showSnackBar(
@@ -74,10 +55,11 @@ class _LoginPageState extends State<LoginPage> {
                       CircularProgressIndicator(),
                     ],
                   ),
+                  duration: Duration(days: 1),
                 ),
               );
             }
-            if (state.error) {
+            if (state.serverError != null) {
               showSnackBar(
                 context,
                 SnackBar(
@@ -85,7 +67,7 @@ class _LoginPageState extends State<LoginPage> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
                       Text(
-                        "An error has occured",
+                        state.serverError,
                         style: TextStyle(
                           fontFamily:
                               Theme.of(context).textTheme.title.fontFamily,
@@ -98,29 +80,11 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               );
             }
-            if (state.success) {
-              showSnackBar(
-                context,
-                SnackBar(
-                  content: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Text(
-                        "You are logged in",
-                        style: TextStyle(
-                          fontFamily:
-                              Theme.of(context).textTheme.title.fontFamily,
-                        ),
-                      ),
-                      Icon(Icons.done),
-                    ],
-                  ),
-                  backgroundColor: Colors.green,
-                ),
-              );
+            if (state.loggedIn) {
+              Navigator.of(context).pushReplacementNamed(MAP_PAGE);
             }
           },
-          child: BlocBuilder<LoginBloc, LoginState>(
+          child: BlocBuilder<LoginFormBloc, LoginFormState>(
             builder: (context, state) => Padding(
               padding: const EdgeInsets.symmetric(
                 horizontal: 32.0,
@@ -146,10 +110,7 @@ class _LoginPageState extends State<LoginPage> {
                           },
                           decoration: InputDecoration(
                             labelText: "Email",
-                            errorText: state.shouldValidateEmail &&
-                                    state.emailError.isNotEmpty
-                                ? state.emailError
-                                : null,
+                            errorText: state.emailError,
                           ),
                         ),
                         SizedBox(
@@ -160,10 +121,7 @@ class _LoginPageState extends State<LoginPage> {
                           obscureText: true,
                           decoration: InputDecoration(
                             labelText: "Password",
-                            errorText: state.shouldValidatePassword &&
-                                    state.passwordError.isNotEmpty
-                                ? state.passwordError
-                                : null,
+                            errorText: state.passwordError,
                           ),
                           focusNode: _passwordNode,
                         ),
@@ -195,7 +153,7 @@ class _LoginPageState extends State<LoginPage> {
                             ],
                           ),
                           onPressed: () {
-                            _loginBloc.add(
+                            _loginFormBloc.add(
                               FormSubmitted(
                                 email: _emailController.text,
                                 password: _passwordController.text,

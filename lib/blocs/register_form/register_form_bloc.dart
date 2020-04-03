@@ -9,37 +9,39 @@ import '../../core/token_manager.dart';
 import '../../core/validators.dart';
 import '../../services/auth_service.dart';
 
-part 'login_event.dart';
-part 'login_state.dart';
+part 'register_form_event.dart';
+part 'register_form_state.dart';
 
-class LoginBloc extends Bloc<LoginEvent, LoginState> {
+class RegisterFormBloc extends Bloc<RegisterFormEvent, RegisterFormState> {
   @override
-  LoginState get initialState => LoginState.initial();
+  RegisterFormState get initialState => RegisterFormState.initial();
 
   @override
-  Stream<LoginState> mapEventToState(
-    LoginEvent event,
+  Stream<RegisterFormState> mapEventToState(
+    RegisterFormEvent event,
   ) async* {
     if (event is EmailChanged && state.shouldValidateEmail)
       yield* _mapEmailChangedToState(event);
     else if (event is PasswordChanged && state.shouldValidatePassword)
       yield* _mapPasswordChangedToState(event);
-    else if (event is FormSubmitted) yield* _mapFormSubmittedToState(event);
+    else if (event is RegisterAttempt) yield* _mapFormSubmittedToState(event);
   }
 
-  Stream<LoginState> _mapEmailChangedToState(EmailChanged event) async* {
+  Stream<RegisterFormState> _mapEmailChangedToState(EmailChanged event) async* {
     yield state.update(
       emailError: Validators.validateEmail(event.email),
     );
   }
 
-  Stream<LoginState> _mapPasswordChangedToState(PasswordChanged event) async* {
+  Stream<RegisterFormState> _mapPasswordChangedToState(
+      PasswordChanged event) async* {
     yield state.update(
       passwordError: Validators.validatePassword(event.password),
     );
   }
 
-  Stream<LoginState> _mapFormSubmittedToState(FormSubmitted event) async* {
+  Stream<RegisterFormState> _mapFormSubmittedToState(
+      RegisterAttempt event) async* {
     final emailError = Validators.validateEmail(event.email);
     final passwordError = Validators.validatePassword(event.password);
     if (emailError.isNotEmpty || passwordError.isNotEmpty)
@@ -63,7 +65,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       final authService =
           AuthService(client: client, tokenManager: tokenManager);
 
-      final res = await authService.login(
+      final res = await authService.register(
         email: event.email,
         password: event.password,
       );

@@ -9,7 +9,7 @@ import '../core/http_client.dart';
 import '../core/token_manager.dart';
 
 class AuthService {
-  static const API_BASE = 'http://88.218.220.20:8000/api';
+  static const API_BASE = 'http://88.218.220.20:8000/api/auth';
 
   final TokenManager tokenManager;
   final HTTPClient client;
@@ -19,30 +19,60 @@ class AuthService {
     @required this.client,
   });
 
-  Future<Option<AuthFailure>> login({
+  Future<Option<Failure>> login({
     @required String email,
     @required String password,
   }) async {
-    try {
-      final response = await client.post(
-        API_BASE + '/auth/login',
-        headers: {
-          HttpHeaders.contentTypeHeader: ContentType.json.value,
-        },
-        body: jsonEncode({
-          "email": email,
-          "password": password,
-        }),
+    final response = await client.post(
+      "$API_BASE/login",
+      headers: {
+        HttpHeaders.contentTypeHeader: ContentType.json.value,
+      },
+      body: jsonEncode({
+        "email": email,
+        "password": password,
+      }),
+    );
+
+    final body = jsonDecode(response.body);
+
+    if (response.statusCode != HttpStatus.ok)
+      return Some(
+        AuthFailure(
+          message: body["error"]["message"],
+          payload: body["error"],
+        ),
       );
 
-      final body = jsonDecode(response.body);
+    await tokenManager.setToken(body["token"]);
+    return None();
+  }
 
-      if (response.statusCode != 200) return Some(AuthFailure(body["errors"]));
+  Future<Option<Failure>> register({
+    @required String email,
+    @required String password,
+  }) async {
+    final response = await client.post(
+      '$API_BASE/register',
+      headers: {
+        HttpHeaders.contentTypeHeader: ContentType.json.value,
+      },
+      body: jsonEncode({
+        "email": email,
+        "password": password,
+      }),
+    );
 
-      await tokenManager.setToken(body["payload"]["token"]);
-      return None();
-    } catch (e) {
-      return Some(AuthFailure(e.toString()));
-    }
+    final body = jsonDecode(response.body);
+
+    if (response.statusCode != HttpStatus.created)
+      return Some(
+        AuthFailure(
+          message: body["error"]["message"],
+          payload: body["error"],
+        ),
+      );
+
+    return None();
   }
 }
