@@ -6,7 +6,7 @@ import 'package:meta/meta.dart';
 import '../../core/http_client.dart';
 import '../../core/token_manager.dart';
 import '../../core/validators.dart';
-import '../../services/auth_service.dart';
+import '../../services/account_service.dart';
 
 part 'login_form_event.dart';
 part 'login_form_state.dart';
@@ -19,7 +19,6 @@ class LoginFormBloc extends Bloc<LoginFormEvent, LoginFormState> {
   Stream<LoginFormState> mapEventToState(
     LoginFormEvent event,
   ) async* {
-    print(state.submitting);
     if (event is LoginAttempt) yield* _mapLoginAttemptToState(event);
   }
 
@@ -39,7 +38,8 @@ class LoginFormBloc extends Bloc<LoginFormEvent, LoginFormState> {
 
     final tokenManager = TokenManager();
     final client = HTTPClient(tokenManager: tokenManager);
-    final authService = AuthService(client: client, tokenManager: tokenManager);
+    final authService =
+        AccountService(client: client, tokenManager: tokenManager);
 
     final res = await authService.login(
       email: event.email,

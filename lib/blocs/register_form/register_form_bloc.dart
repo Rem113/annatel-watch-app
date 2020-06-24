@@ -1,13 +1,12 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
-import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 
 import '../../core/http_client.dart';
 import '../../core/token_manager.dart';
 import '../../core/validators.dart';
-import '../../services/auth_service.dart';
+import '../../services/account_service.dart';
 
 part 'register_form_event.dart';
 part 'register_form_state.dart';
@@ -48,7 +47,8 @@ class RegisterFormBloc extends Bloc<RegisterFormEvent, RegisterFormState> {
 
     final tokenManager = TokenManager();
     final client = HTTPClient(tokenManager: tokenManager);
-    final authService = AuthService(client: client, tokenManager: tokenManager);
+    final authService =
+        AccountService(client: client, tokenManager: tokenManager);
 
     final res = await authService.register(
       email: event.email,

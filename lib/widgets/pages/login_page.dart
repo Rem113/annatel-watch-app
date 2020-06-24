@@ -53,8 +53,10 @@ class _LoginPageState extends State<LoginPage> {
                         Text(
                           state.serverError,
                           style: TextStyle(
-                            fontFamily:
-                                Theme.of(context).textTheme.title.fontFamily,
+                            fontFamily: Theme.of(context)
+                                .textTheme
+                                .headline6
+                                .fontFamily,
                           ),
                         ),
                         Icon(Icons.done),
@@ -65,7 +67,7 @@ class _LoginPageState extends State<LoginPage> {
                 );
             }
             if (state.loggedIn) {
-              Navigator.of(context).pushReplacementNamed(MAP_PAGE);
+              Navigator.of(context).pushReplacementNamed(WATCHES_PAGE);
             }
           },
           child: BlocBuilder<LoginFormBloc, LoginFormState>(
@@ -80,7 +82,7 @@ class _LoginPageState extends State<LoginPage> {
                       children: [
                         Text(
                           "Login",
-                          style: Theme.of(context).textTheme.title,
+                          style: Theme.of(context).textTheme.headline6,
                         ),
                         SizedBox(
                           height: 32.0,

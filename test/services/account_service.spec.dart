@@ -1,5 +1,5 @@
 import 'package:annatel_app/core/http_client.dart';
-import 'package:annatel_app/services/auth_service.dart';
+import 'package:annatel_app/services/account_service.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 
@@ -10,7 +10,7 @@ final tValidEmail = "remi.saal@gmail.com";
 final tValidPassword = "password";
 
 HTTPClient client;
-AuthService authService;
+AccountService authService;
 
 void main() {
   setUp(() {

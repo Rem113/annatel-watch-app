@@ -57,8 +57,10 @@ class _RegisterPageState extends State<RegisterPage> {
                         Text(
                           state.serverError,
                           style: TextStyle(
-                            fontFamily:
-                                Theme.of(context).textTheme.title.fontFamily,
+                            fontFamily: Theme.of(context)
+                                .textTheme
+                                .headline6
+                                .fontFamily,
                           ),
                         ),
                         Icon(Icons.done),
@@ -84,7 +86,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       children: [
                         Text(
                           "Register",
-                          style: Theme.of(context).textTheme.title,
+                          style: Theme.of(context).textTheme.headline6,
                         ),
                         SizedBox(
                           height: 32.0,

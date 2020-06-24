@@ -1,3 +1,4 @@
+import 'package:annatel_app/widgets/pages/watches_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -20,7 +21,7 @@ class MyApp extends StatelessWidget {
           accentColor: Color(0xFF4776E6),
           fontFamily: 'Quicksand',
           textTheme: TextTheme(
-            title: TextStyle(
+            headline6: TextStyle(
               fontSize: 48.0,
             ),
           ),
@@ -41,6 +42,7 @@ class MyApp extends StatelessWidget {
                 create: (_) => RegisterFormBloc(),
                 child: RegisterPage(),
               ),
+          WATCHES_PAGE: (ctx) => WatchesPage(),
           MAP_PAGE: (ctx) => MapPage(),
         },
       );

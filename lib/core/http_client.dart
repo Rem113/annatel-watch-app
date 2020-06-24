@@ -13,9 +13,12 @@ class HTTPClient {
     @required this.tokenManager,
   });
 
-  Future<http.Response> get(url, {Map<String, String> headers}) async {
+  Future<http.Response> get(
+    url, {
+    Map<String, String> headers,
+  }) async {
     final token = await tokenManager.getToken();
-    headers[HttpHeaders.authorizationHeader] = token;
+    headers[HttpHeaders.authorizationHeader] = 'Bearer $token';
 
     return http.get(
       url,
@@ -23,8 +26,12 @@ class HTTPClient {
     );
   }
 
-  Future<http.Response> post(url,
-      {Map<String, String> headers, body, Encoding encoding}) async {
+  Future<http.Response> post(
+    url, {
+    Map<String, String> headers,
+    body,
+    Encoding encoding,
+  }) async {
     final token = await tokenManager.getToken();
     headers[HttpHeaders.authorizationHeader] = token;
 

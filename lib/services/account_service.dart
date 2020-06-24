@@ -8,13 +8,13 @@ import '../core/failures.dart';
 import '../core/http_client.dart';
 import '../core/token_manager.dart';
 
-class AuthService {
-  static const API_BASE = 'http://88.218.220.20:8000/api/auth';
+class AccountService {
+  static const API_BASE = 'http://88.218.220.20:3000/api/account';
 
   final TokenManager tokenManager;
   final HTTPClient client;
 
-  AuthService({
+  AccountService({
     @required this.tokenManager,
     @required this.client,
   });
@@ -24,7 +24,7 @@ class AuthService {
     @required String password,
   }) async {
     final response = await client.post(
-      "$API_BASE/login",
+      "$API_BASE/token",
       headers: {
         HttpHeaders.contentTypeHeader: ContentType.json.value,
       },
@@ -38,10 +38,7 @@ class AuthService {
 
     if (response.statusCode != HttpStatus.ok)
       return Some(
-        AuthFailure(
-          message: body["error"]["message"],
-          payload: body["error"],
-        ),
+        AuthFailure(message: body["message"]),
       );
 
     await tokenManager.setToken(body["token"]);
@@ -53,7 +50,7 @@ class AuthService {
     @required String password,
   }) async {
     final response = await client.post(
-      '$API_BASE/register',
+      '$API_BASE',
       headers: {
         HttpHeaders.contentTypeHeader: ContentType.json.value,
       },
@@ -67,10 +64,7 @@ class AuthService {
 
     if (response.statusCode != HttpStatus.created)
       return Some(
-        AuthFailure(
-          message: body["error"]["message"],
-          payload: body["error"],
-        ),
+        AuthFailure(message: body["message"]),
       );
 
     return None();
