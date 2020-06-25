@@ -18,12 +18,7 @@ class ParentService {
   });
 
   Future<Either<Failure, List<Subscription>>> subscriptions() async {
-    final response = await client.get(
-      '$API_BASE/subscriptions',
-      headers: {
-        HttpHeaders.contentTypeHeader: ContentType.json.value,
-      },
-    );
+    final response = await client.get('$API_BASE/subscriptions');
 
     if (response.statusCode != HttpStatus.ok) {
       return Left(AuthFailure(message: "An error has occured"));
@@ -37,5 +32,27 @@ class ParentService {
         .cast<Subscription>();
 
     return Right(subscriptions);
+  }
+
+  Future<Option<Failure>> subscribeTo(
+      String name, String id, String vendor) async {
+    final response = await client.put(
+      '$API_BASE/watch/subscribe',
+      headers: {
+        HttpHeaders.contentTypeHeader: ContentType.json.value,
+      },
+      body: jsonEncode({
+        "name": name,
+        "serial": id,
+        "vendor": vendor,
+      }),
+    );
+
+    if (response.statusCode != HttpStatus.ok) {
+      final body = jsonDecode(response.body);
+      return Some(AuthFailure(message: body["message"]));
+    }
+
+    return None();
   }
 }
