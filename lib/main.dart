@@ -1,21 +1,21 @@
-import 'package:annatel_app/blocs/watch/watch_bloc.dart';
-import 'package:annatel_app/widgets/pages/watch_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'blocs/login_form/login_form_bloc.dart';
 import 'blocs/register_form/register_form_bloc.dart';
+import 'blocs/subscription/subscription_bloc.dart';
 import 'routes.dart';
 import 'widgets/pages/login_page.dart';
 import 'widgets/pages/map_page.dart';
 import 'widgets/pages/register_page.dart';
+import 'widgets/pages/subscription_page.dart';
 
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
   @override
-  Widget build(BuildContext context) => BlocProvider<WatchBloc>(
-        create: (_) => WatchBloc(),
+  Widget build(BuildContext context) => BlocProvider<SubscriptionBloc>(
+        create: (_) => SubscriptionBloc(),
         child: MaterialApp(
           title: 'Flutter Demo',
           theme: ThemeData(
@@ -45,7 +45,7 @@ class MyApp extends StatelessWidget {
                   create: (_) => RegisterFormBloc(),
                   child: RegisterPage(),
                 ),
-            WATCH_PAGE: (ctx) => WatchPage(),
+            SUBSCRIPTION_PAGE: (ctx) => SubscriptionPage(),
             MAP_PAGE: (ctx) => MapPage(),
           },
         ),

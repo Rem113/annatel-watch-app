@@ -7,16 +7,16 @@ import 'package:annatel_app/services/parent_service.dart';
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 
-part 'watch_event.dart';
-part 'watch_state.dart';
+part 'subscription_event.dart';
+part 'subscription_state.dart';
 
-class WatchBloc extends Bloc<WatchEvent, WatchState> {
+class SubscriptionBloc extends Bloc<SubscriptionEvent, SubscriptionState> {
   @override
-  WatchState get initialState => WatchState.init();
+  SubscriptionState get initialState => SubscriptionState.init();
 
   @override
-  Stream<WatchState> mapEventToState(
-    WatchEvent event,
+  Stream<SubscriptionState> mapEventToState(
+    SubscriptionEvent event,
   ) async* {
     if (event is LoadSubscriptions) {
       yield* _mapLoadSubscriptionsToState(event);
@@ -25,9 +25,9 @@ class WatchBloc extends Bloc<WatchEvent, WatchState> {
     }
   }
 
-  Stream<WatchState> _mapLoadSubscriptionsToState(
+  Stream<SubscriptionState> _mapLoadSubscriptionsToState(
       LoadSubscriptions event) async* {
-    yield WatchState.loading();
+    yield SubscriptionState.loading();
 
     final tokenManager = TokenManager();
     final httpClient = HTTPClient(tokenManager: tokenManager);
@@ -36,12 +36,13 @@ class WatchBloc extends Bloc<WatchEvent, WatchState> {
     final subscriptions = await parentService.subscriptions();
 
     yield subscriptions.fold(
-      (failure) => WatchState.error(failure.message),
-      (subscriptions) => WatchState.loaded(subscriptions),
+      (failure) => SubscriptionState.error(failure.message),
+      (subscriptions) => SubscriptionState.loaded(subscriptions),
     );
   }
 
-  Stream<WatchState> _mapWatchSelectedToState(WatchSelected event) async* {
+  Stream<SubscriptionState> _mapWatchSelectedToState(
+      WatchSelected event) async* {
     yield state.copyWith(selectedWatch: event.watchId);
   }
 }

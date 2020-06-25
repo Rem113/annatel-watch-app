@@ -2,26 +2,26 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../blocs/add_watch/add_watch_bloc.dart';
-import '../../blocs/watch/watch_bloc.dart';
+import '../../blocs/subscription/subscription_bloc.dart';
 import '../../entities/subscription.dart';
 import '../../routes.dart';
 import '../controls/add_watch_dialog.dart';
 
-class WatchPage extends StatefulWidget {
+class SubscriptionPage extends StatefulWidget {
   @override
-  _WatchPageState createState() => _WatchPageState();
+  _SubscriptionPageState createState() => _SubscriptionPageState();
 }
 
-class _WatchPageState extends State<WatchPage> {
+class _SubscriptionPageState extends State<SubscriptionPage> {
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  WatchBloc _watchBloc;
+  SubscriptionBloc _subscriptionBloc;
 
   @override
   void initState() {
     super.initState();
 
-    _watchBloc = BlocProvider.of<WatchBloc>(context);
-    _watchBloc.add(LoadSubscriptions());
+    _subscriptionBloc = BlocProvider.of<SubscriptionBloc>(context);
+    _subscriptionBloc.add(LoadSubscriptions());
   }
 
   Widget _buildSubscriptionList(List<Subscription> subscriptions) =>
@@ -32,7 +32,7 @@ class _WatchPageState extends State<WatchPage> {
           return ListTile(
             trailing: Icon(Icons.arrow_forward_ios),
             title: Text(sub.name),
-            onTap: () => _watchBloc.add(WatchSelected(sub.watchId)),
+            onTap: () => _subscriptionBloc.add(WatchSelected(sub.watchId)),
           );
         },
       );
@@ -47,13 +47,14 @@ class _WatchPageState extends State<WatchPage> {
     );
 
     if (added != null) {
-      _watchBloc.add(LoadSubscriptions());
+      _subscriptionBloc.add(LoadSubscriptions());
     }
   }
 
   @override
-  Widget build(BuildContext context) => BlocListener<WatchBloc, WatchState>(
-        bloc: _watchBloc,
+  Widget build(BuildContext context) =>
+      BlocListener<SubscriptionBloc, SubscriptionState>(
+        bloc: _subscriptionBloc,
         listener: (context, state) {
           if (state.selectedWatch != null) {
             Navigator.of(context).pushNamed(MAP_PAGE);
@@ -73,7 +74,7 @@ class _WatchPageState extends State<WatchPage> {
             ],
           ),
           body: BlocBuilder(
-            bloc: _watchBloc,
+            bloc: _subscriptionBloc,
             builder: (context, state) {
               if (state.loading == true) {
                 return Center(
@@ -85,6 +86,10 @@ class _WatchPageState extends State<WatchPage> {
                 return Center(
                   child: Text(state.error),
                 );
+              }
+
+              if (state.subscriptions.length == 0) {
+                return Center(child: Text("You have no subcriptions yet!"));
               }
 
               return _buildSubscriptionList(state.subscriptions);

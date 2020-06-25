@@ -67,7 +67,7 @@ class _LoginPageState extends State<LoginPage> {
                 );
             }
             if (state.loggedIn) {
-              Navigator.of(context).pushReplacementNamed(WATCH_PAGE);
+              Navigator.of(context).pushReplacementNamed(SUBSCRIPTION_PAGE);
             }
           },
           child: BlocBuilder<LoginFormBloc, LoginFormState>(

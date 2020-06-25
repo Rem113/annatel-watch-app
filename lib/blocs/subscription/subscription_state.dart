@@ -1,51 +1,52 @@
-part of 'watch_bloc.dart';
+part of 'subscription_bloc.dart';
 
-class WatchState {
+class SubscriptionState {
   final List<Subscription> subscriptions;
   final String error;
   final bool loading;
   final String selectedWatch;
 
-  WatchState({
+  SubscriptionState({
     this.subscriptions,
     this.error,
     this.loading,
     this.selectedWatch,
   });
 
-  factory WatchState.init() => WatchState(
+  factory SubscriptionState.init() => SubscriptionState(
         subscriptions: [],
         error: null,
         loading: false,
         selectedWatch: null,
       );
 
-  factory WatchState.loading() => WatchState(
+  factory SubscriptionState.loading() => SubscriptionState(
         subscriptions: [],
         error: null,
         loading: true,
         selectedWatch: null,
       );
 
-  factory WatchState.loaded(List<Subscription> subscriptions) => WatchState(
+  factory SubscriptionState.loaded(List<Subscription> subscriptions) =>
+      SubscriptionState(
         subscriptions: subscriptions,
         error: null,
         loading: false,
         selectedWatch: null,
       );
 
-  factory WatchState.error(String error) => WatchState(
+  factory SubscriptionState.error(String error) => SubscriptionState(
         error: error,
         loading: false,
       );
 
-  WatchState copyWith({
+  SubscriptionState copyWith({
     List<Subscription> subscriptions,
     String error,
     bool loading,
     String selectedWatch,
   }) {
-    return WatchState(
+    return SubscriptionState(
       subscriptions: subscriptions ?? this.subscriptions,
       error: error ?? this.error,
       loading: loading ?? this.loading,
