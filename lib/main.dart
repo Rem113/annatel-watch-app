@@ -1,3 +1,4 @@
+import 'package:annatel_app/blocs/watch/watch_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -46,7 +47,10 @@ class MyApp extends StatelessWidget {
                   child: RegisterPage(),
                 ),
             SUBSCRIPTION_PAGE: (ctx) => SubscriptionPage(),
-            MAP_PAGE: (ctx) => MapPage(),
+            MAP_PAGE: (ctx) => BlocProvider<WatchBloc>(
+                  create: (_) => WatchBloc(),
+                  child: MapPage(),
+                ),
           },
         ),
       );
