@@ -20,6 +20,8 @@ class WatchBloc extends Bloc<WatchEvent, WatchState> {
   ) async* {
     if (event is LoadSubscriptions) {
       yield* _mapLoadSubscriptionsToState(event);
+    } else if (event is WatchSelected) {
+      yield* _mapWatchSelectedToState(event);
     }
   }
 
@@ -37,5 +39,9 @@ class WatchBloc extends Bloc<WatchEvent, WatchState> {
       (failure) => WatchState.error(failure.message),
       (subscriptions) => WatchState.loaded(subscriptions),
     );
+  }
+
+  Stream<WatchState> _mapWatchSelectedToState(WatchSelected event) async* {
+    yield state.copyWith(selectedWatch: event.watchId);
   }
 }

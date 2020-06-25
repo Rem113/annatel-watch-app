@@ -5,8 +5,8 @@ abstract class WatchEvent {}
 
 class LoadSubscriptions extends WatchEvent {}
 
-class SelectWatch extends WatchEvent {
+class WatchSelected extends WatchEvent {
   final String watchId;
 
-  SelectWatch({@required this.watchId});
+  WatchSelected(this.watchId);
 }

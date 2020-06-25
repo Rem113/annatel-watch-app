@@ -1,9 +1,11 @@
-import 'package:annatel_app/blocs/add_watch/add_watch_bloc.dart';
-import 'package:annatel_app/blocs/watch/watch_bloc.dart';
-import 'package:annatel_app/entities/subscription.dart';
-import 'package:annatel_app/widgets/controls/add_watch_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../../blocs/add_watch/add_watch_bloc.dart';
+import '../../blocs/watch/watch_bloc.dart';
+import '../../entities/subscription.dart';
+import '../../routes.dart';
+import '../controls/add_watch_dialog.dart';
 
 class WatchPage extends StatefulWidget {
   @override
@@ -30,7 +32,7 @@ class _WatchPageState extends State<WatchPage> {
           return ListTile(
             trailing: Icon(Icons.arrow_forward_ios),
             title: Text(sub.name),
-            onTap: () {},
+            onTap: () => _watchBloc.add(WatchSelected(sub.watchId)),
           );
         },
       );
@@ -50,45 +52,58 @@ class _WatchPageState extends State<WatchPage> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      key: _scaffoldKey,
-      appBar: AppBar(
-        title: Text("Watches"),
-        centerTitle: true,
-      ),
-      body: BlocBuilder(
+  Widget build(BuildContext context) => BlocListener<WatchBloc, WatchState>(
         bloc: _watchBloc,
-        builder: (context, state) {
-          if (state.loading == true) {
-            return Center(
-              child: CircularProgressIndicator(),
-            );
+        listener: (context, state) {
+          if (state.selectedWatch != null) {
+            Navigator.of(context).pushNamed(MAP_PAGE);
           }
-
-          if (state.error != null) {
-            return Center(
-              child: Text(state.error),
-            );
-          }
-
-          return _buildSubscriptionList(state.subscriptions);
         },
-      ),
-      floatingActionButton: Builder(
-        builder: (context) {
-          return FloatingActionButton.extended(
-            onPressed: () => _showAddWatchDialog(context),
-            label: Row(
-              children: <Widget>[
-                Icon(Icons.add),
-                SizedBox(width: 8.0),
-                Text("Add Watch"),
-              ],
-            ),
-          );
-        },
-      ),
-    );
-  }
+        child: Scaffold(
+          key: _scaffoldKey,
+          appBar: AppBar(
+            title: Text("Watches"),
+            centerTitle: true,
+            actions: [
+              IconButton(
+                icon: Icon(Icons.exit_to_app),
+                onPressed: () =>
+                    Navigator.pushReplacementNamed(context, LOGIN_PAGE),
+              ),
+            ],
+          ),
+          body: BlocBuilder(
+            bloc: _watchBloc,
+            builder: (context, state) {
+              if (state.loading == true) {
+                return Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+
+              if (state.error != null) {
+                return Center(
+                  child: Text(state.error),
+                );
+              }
+
+              return _buildSubscriptionList(state.subscriptions);
+            },
+          ),
+          floatingActionButton: Builder(
+            builder: (context) {
+              return FloatingActionButton.extended(
+                onPressed: () => _showAddWatchDialog(context),
+                label: Row(
+                  children: <Widget>[
+                    Icon(Icons.add),
+                    SizedBox(width: 8.0),
+                    Text("Add Watch"),
+                  ],
+                ),
+              );
+            },
+          ),
+        ),
+      );
 }
