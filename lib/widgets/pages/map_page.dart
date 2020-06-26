@@ -23,6 +23,71 @@ class _MapPageState extends State<MapPage> {
     _watchBloc.add(LoadMessages(_subscriptionBloc.state.selectedWatch));
   }
 
+  _showMenu(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) => Container(
+        width: double.infinity,
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: <Widget>[
+              FlatButton(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Icon(Icons.location_on),
+                    SizedBox(height: 8.0),
+                    Text(
+                      "Location",
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
+                splashColor: Colors.transparent,
+                highlightColor: Colors.transparent,
+                onPressed: () {},
+              ),
+              FlatButton(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Icon(Icons.gps_not_fixed),
+                    SizedBox(height: 8.0),
+                    Text(
+                      "Geofence",
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
+                splashColor: Colors.transparent,
+                highlightColor: Colors.transparent,
+                onPressed: () {},
+              ),
+              FlatButton(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Icon(Icons.settings),
+                    SizedBox(height: 8.0),
+                    Text(
+                      "Settings",
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
+                splashColor: Colors.transparent,
+                highlightColor: Colors.transparent,
+                onPressed: () {},
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) => Scaffold(
         body: BlocBuilder<WatchBloc, WatchState>(
@@ -36,7 +101,7 @@ class _MapPageState extends State<MapPage> {
                   .where((message) => message.actionType == "UD")
                   .toList();
               return MapView(
-                locations
+                locations: locations
                     .map(
                       (location) => LatLng(
                         location.payload["latitude"].toDouble(),
@@ -44,9 +109,20 @@ class _MapPageState extends State<MapPage> {
                       ),
                     )
                     .toList(),
+                geofences: _subscriptionBloc.state.subscriptions
+                    .firstWhere((sub) =>
+                        sub.watchId == _subscriptionBloc.state.selectedWatch)
+                    .geofences,
               );
             }
           },
         ),
+        floatingActionButton: Builder(
+          builder: (context) => FloatingActionButton(
+            child: Icon(Icons.menu),
+            onPressed: () => _showMenu(context),
+          ),
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       );
 }
