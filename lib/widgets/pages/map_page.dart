@@ -3,6 +3,7 @@ import 'package:annatel_app/blocs/watch/watch_bloc.dart';
 import 'package:annatel_app/widgets/controls/map_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_map/plugin_api.dart';
 import 'package:latlong/latlong.dart';
 
 class MapPage extends StatefulWidget {
@@ -13,6 +14,9 @@ class MapPage extends StatefulWidget {
 class _MapPageState extends State<MapPage> {
   WatchBloc _watchBloc;
   SubscriptionBloc _subscriptionBloc;
+
+  int _focusIndex = 0;
+  final MapController _mapController = MapController();
 
   @override
   void initState() {
@@ -88,6 +92,26 @@ class _MapPageState extends State<MapPage> {
     );
   }
 
+  _moveMap(int index) {
+    final locations = _watchBloc.state.messages
+        .where((message) => message.actionType == "UD")
+        .toList();
+    if (index >= 0 && index < locations.length) {
+      final center = locations[index];
+      _mapController.move(
+        LatLng(
+          center.payload["latitude"].toDouble(),
+          center.payload["longitude"].toDouble(),
+        ),
+        15.0,
+      );
+
+      setState(() {
+        _focusIndex = index;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) => Scaffold(
         body: BlocBuilder<WatchBloc, WatchState>(
@@ -100,7 +124,9 @@ class _MapPageState extends State<MapPage> {
               final locations = messages
                   .where((message) => message.actionType == "UD")
                   .toList();
+
               return MapView(
+                mapController: _mapController,
                 locations: locations
                     .map(
                       (location) => LatLng(
@@ -117,12 +143,29 @@ class _MapPageState extends State<MapPage> {
             }
           },
         ),
+        bottomNavigationBar: BottomAppBar(
+          shape: CircularNotchedRectangle(),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              IconButton(
+                icon: Icon(Icons.arrow_back),
+                onPressed: () => _moveMap(_focusIndex - 1),
+              ),
+              IconButton(
+                icon: Icon(Icons.arrow_forward),
+                onPressed: () => _moveMap(_focusIndex + 1),
+              ),
+            ],
+          ),
+        ),
+        extendBody: true,
         floatingActionButton: Builder(
           builder: (context) => FloatingActionButton(
             child: Icon(Icons.menu),
             onPressed: () => _showMenu(context),
           ),
         ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       );
 }

@@ -3,22 +3,30 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong/latlong.dart';
 
-class MapView extends StatelessWidget {
+class MapView extends StatefulWidget {
   static const ACCESS_TOKEN =
       "pk.eyJ1IjoicmVtMTEzIiwiYSI6ImNrODdiNGt5NTBrYjYzb21td2U0bmRpNmcifQ.FnKRSZ3keM6IR_cymxIckw";
 
   final List<LatLng> locations;
   final List<Geofence> geofences;
+  final MapController mapController;
 
   MapView({
     @required this.locations,
     @required this.geofences,
+    @required this.mapController,
   });
 
   @override
+  _MapViewState createState() => _MapViewState();
+}
+
+class _MapViewState extends State<MapView> {
+  @override
   Widget build(BuildContext context) => FlutterMap(
+        mapController: widget.mapController,
         options: MapOptions(
-          center: locations.isNotEmpty ? locations[0] : LatLng(0, 0),
+          center: widget.locations.first,
           zoom: 15.0,
         ),
         layers: [
@@ -26,12 +34,12 @@ class MapView extends StatelessWidget {
             urlTemplate: "https://api.tiles.mapbox.com/v4/"
                 "{id}/{z}/{x}/{y}@2x.png?access_token={accessToken}",
             additionalOptions: {
-              'accessToken': ACCESS_TOKEN,
+              'accessToken': MapView.ACCESS_TOKEN,
               'id': 'mapbox.streets'
             },
           ),
           CircleLayerOptions(
-            circles: geofences
+            circles: widget.geofences
                 .map((geofence) => CircleMarker(
                       point: LatLng(
                         geofence.latitude,
@@ -48,7 +56,7 @@ class MapView extends StatelessWidget {
           PolylineLayerOptions(
             polylines: [
               Polyline(
-                points: locations,
+                points: widget.locations,
                 borderColor: Theme.of(context).accentColor,
                 borderStrokeWidth: 2.0,
                 color: Theme.of(context).accentColor,
@@ -56,7 +64,7 @@ class MapView extends StatelessWidget {
             ],
           ),
           MarkerLayerOptions(
-            markers: geofences
+            markers: widget.geofences
                 .map(
                   (geofence) => Marker(
                     point: LatLng(
@@ -92,7 +100,7 @@ class MapView extends StatelessWidget {
                 .toList(),
           ),
           MarkerLayerOptions(
-            markers: locations
+            markers: widget.locations
                 .asMap()
                 .map(
                   (i, c) => MapEntry(
@@ -110,6 +118,8 @@ class MapView extends StatelessWidget {
                   ),
                 )
                 .values
+                .toList()
+                .reversed
                 .toList(),
           ),
         ],
