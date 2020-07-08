@@ -3,7 +3,7 @@ abstract class Validators {
     r'^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$',
   );
   static RegExp _watchIdRegExp = RegExp(
-    r'^[0-9]{9}$',
+    r'^[0-9]*$',
   );
 
   static String validateEmail(String email) {
@@ -41,7 +41,6 @@ abstract class Validators {
 
   static String validateWatchId(String watchId) {
     if (watchId.isEmpty) return "Please enter a watch ID";
-    if (watchId.length != 9) return "Watch ID is 9 characters";
     if (!_watchIdRegExp.hasMatch(watchId)) return "Watch ID format is invalid";
 
     return null;

@@ -94,22 +94,29 @@ class _MapPageState extends State<MapPage> {
 
   _moveMap(int index) {
     final locations = _watchBloc.state.messages
-        .where((message) => message.actionType == "UD")
+        .where((message) => ["UD", "AL"].contains(message.actionType))
         .toList();
+    LatLng center;
     if (index >= 0 && index < locations.length) {
-      final center = locations[index];
-      _mapController.move(
-        LatLng(
-          center.payload["latitude"].toDouble(),
-          center.payload["longitude"].toDouble(),
-        ),
-        15.0,
+      center = LatLng(
+        locations[index].payload["latitude"].toDouble(),
+        locations[index].payload["longitude"].toDouble(),
       );
 
       setState(() {
         _focusIndex = index;
       });
+    } else {
+      center = LatLng(
+        locations[_focusIndex].payload["latitude"].toDouble(),
+        locations[_focusIndex].payload["longitude"].toDouble(),
+      );
     }
+
+    _mapController.move(
+      center,
+      16.0,
+    );
   }
 
   @override
@@ -122,7 +129,7 @@ class _MapPageState extends State<MapPage> {
             } else {
               final messages = state.messages;
               final locations = messages
-                  .where((message) => message.actionType == "UD")
+                  .where((message) => ["UD", "AL"].contains(message.actionType))
                   .toList();
 
               return MapView(
