@@ -89,7 +89,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
               }
 
               if (state.subscriptions.length == 0) {
-                return Center(child: Text("You have no subcriptions yet!"));
+                return Center(child: Text("You have no subscriptions yet!"));
               }
 
               return _buildSubscriptionList(state.subscriptions);

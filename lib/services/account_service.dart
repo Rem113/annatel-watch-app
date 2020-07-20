@@ -67,6 +67,8 @@ class AccountService {
         AuthFailure(message: body["message"]),
       );
 
+    await login(email: email, password: password);
+
     return None();
   }
 }

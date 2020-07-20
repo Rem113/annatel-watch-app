@@ -49,7 +49,7 @@ class _MapViewState extends State<MapView> {
                       useRadiusInMeter: true,
                       borderColor: Colors.blue,
                       borderStrokeWidth: 2.0,
-                      color: Colors.lightBlue,
+                      color: Colors.lightBlue.withAlpha(50),
                     ))
                 .toList(),
           ),

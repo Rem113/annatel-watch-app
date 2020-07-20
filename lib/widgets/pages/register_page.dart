@@ -63,7 +63,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                 .fontFamily,
                           ),
                         ),
-                        Icon(Icons.done),
+                        Icon(Icons.clear),
                       ],
                     ),
                     backgroundColor: Theme.of(context).errorColor,
@@ -71,7 +71,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 );
             }
             if (state.registered) {
-              Navigator.of(context).pushReplacementNamed(LOGIN_PAGE);
+              Navigator.of(context).pushReplacementNamed(SUBSCRIPTION_PAGE);
             }
           },
           child: BlocBuilder<RegisterFormBloc, RegisterFormState>(

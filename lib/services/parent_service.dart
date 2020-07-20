@@ -21,7 +21,7 @@ class ParentService {
     final response = await client.get('$API_BASE/subscriptions');
 
     if (response.statusCode != HttpStatus.ok) {
-      return Left(AuthFailure(message: "An error has occured"));
+      return Left(AuthFailure(message: "An error has occurred"));
     }
 
     final body = jsonDecode(response.body);
