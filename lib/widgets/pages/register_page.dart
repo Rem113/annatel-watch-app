@@ -146,10 +146,8 @@ class _RegisterPageState extends State<RegisterPage> {
                             ],
                           ),
                           onPressed: () {
-                            Navigator.of(context).pushNamedAndRemoveUntil(
-                              LOGIN_PAGE,
-                              (_) => false,
-                            );
+                            Navigator.of(context)
+                                .pushReplacementNamed(LOGIN_PAGE);
                           },
                           text: "I already have an account",
                         ),

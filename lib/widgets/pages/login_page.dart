@@ -125,7 +125,8 @@ class _LoginPageState extends State<LoginPage> {
                             ],
                           ),
                           onPressed: () {
-                            Navigator.of(context).pushNamed(REGISTER_PAGE);
+                            Navigator.of(context)
+                                .pushReplacementNamed(REGISTER_PAGE);
                           },
                           text: "I don't have an account",
                         ),
