@@ -5,6 +5,7 @@ import 'package:annatel_app/core/token_manager.dart';
 import 'package:annatel_app/entities/message.dart';
 import 'package:annatel_app/services/watch_service.dart';
 import 'package:bloc/bloc.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:meta/meta.dart';
 
 part 'watch_event.dart';
@@ -29,7 +30,27 @@ class WatchBloc extends Bloc<WatchEvent, WatchState> {
     yield WatchState.loading();
 
     final result = await watchService.messagesFor(event.watchId);
+    final addresses = await _getAddresses(result);
 
-    yield WatchState.loaded(result);
+    yield WatchState.loaded(result, addresses);
+  }
+
+  Future<List<String>> _getAddresses(List<Message> messages) async {
+    Geolocator geolocator = Geolocator();
+    List<String> listAddresses = [];
+
+    final locations = messages
+        .where((message) => ["UD", "AL"].contains(message.actionType))
+        .toList();
+
+    for (var location in locations) {
+      var result = await geolocator.placemarkFromCoordinates(
+          location.payload['latitude'], location.payload['longitude']);
+
+      var f = result.first;
+      listAddresses.add("${f.name} ${f.thoroughfare} ${f.locality}");
+    }
+
+    return listAddresses;
   }
 }

@@ -1,5 +1,6 @@
 import 'package:annatel_app/blocs/subscription/subscription_bloc.dart';
 import 'package:annatel_app/blocs/watch/watch_bloc.dart';
+import 'package:annatel_app/routes.dart';
 import 'package:annatel_app/widgets/controls/map_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -51,7 +52,9 @@ class _MapPageState extends State<MapPage> {
                 ),
                 splashColor: Colors.transparent,
                 highlightColor: Colors.transparent,
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.of(context).pushNamed(LOCATIONS_PAGE);
+                },
               ),
               FlatButton(
                 child: Column(
